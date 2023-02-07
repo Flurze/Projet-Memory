@@ -107,6 +107,7 @@ public class Accueil {
 
 			for(int i = 0;i < comboBoxJoueur.getValue();i++){
 				labelNom[i] = new Label();
+				labelNom[i].setId("custom-label");
 				labelNom[i].setText(textFields[i].getText()+" Score : ");
 			}	
 	        
@@ -120,13 +121,14 @@ public class Accueil {
 			hbox.getChildren().add(vboxTest);
 			hbox.getChildren().add(vboxTest2);	
 
-			Scene secondScene = new Scene(hbox, 400, 400);
+			Scene secondScene = new Scene(hbox, 600, 400);
+			secondScene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+
 
 			// New window (Stage)
 			Stage newWindow = new Stage();
 			newWindow.setTitle("Second Stage");
 			newWindow.setScene(secondScene);
-
 			// Set position of second window, related to primary window.
 			newWindow.setX(primaryStage.getX() + 200);
 			newWindow.setY(primaryStage.getY() + 100);
