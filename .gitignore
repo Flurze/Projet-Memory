@@ -1,11 +1,14 @@
 /.classpath
+.classpath
 
 /.project
+.project
 
 build.fxbuild
 
 /.settings
+.settings
 
-/bin
+/bin/
 
 /src/module-info.java
