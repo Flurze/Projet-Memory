@@ -2,6 +2,7 @@ package application.view;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,6 +20,8 @@ import javafx.stage.Stage;
 public class Accueil {
 	
 	private VBox vbox;
+	private int compteur;
+	
 
 	public Accueil(Stage primaryStage) {
 		super();
@@ -80,19 +85,43 @@ public class Accueil {
 			GridPane gridPane = new GridPane();
 			
 			gridPane.setPadding(new Insets(20));
+			gridPane.setVgap(10);
+			gridPane.setHgap(10);
 			
+
 			int paire = Integer.valueOf(comboBoxCarte.getValue().toString());
 			
 			Button[] boutonsTab = new Button[(paire*2)];
-			
 			for(int i = 0; i < (paire * 2); i++) {
 				Button bouton = new Button();
 				bouton.setMinSize(60, 80);
+		        ImageView imageView = new ImageView(getClass().getResource("cart.png").toExternalForm());
+				bouton.setGraphic(imageView);
+				bouton.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+		        	public void handle(ActionEvent event) {
+		        		if (compteur <2) {
+		        			bouton.setText("Hello, World.");
+							bouton.setGraphic(null);
+							compteur ++;
+		        		}
+		        		else {
+		        			bouton.setText("");
+							bouton.setGraphic(imageView);
+							compteur = 0;
+		        		}
+		            	
+		            }	            
+		        });	
+		      
+				
+				
+
 				boutonsTab[i] =  bouton;
 				if((i + 1) % 5 == 0) {
 					gridPane.addRow(row, boutonsTab[i], boutonsTab[i - 1], boutonsTab[i - 2], boutonsTab[i - 3], boutonsTab[i - 4]);
 					row++;
 				}
+				
 			}
 			
 			
@@ -108,20 +137,24 @@ public class Accueil {
 			for(int i = 0;i < comboBoxJoueur.getValue();i++){
 				labelNom[i] = new Label();
 				labelNom[i].setId("custom-label");
+				labelNom[i].setPrefSize(200, 50);
 				labelNom[i].setText(textFields[i].getText()+" Score : ");
 			}	
 	        
 	        VBox vboxTest = new VBox();
 			vboxTest.getChildren().add(gridPane);
 			
+
 			VBox vboxTest2 = new VBox();
 			vboxTest2.getChildren().add(btn);
 			vboxTest2.getChildren().addAll(labelNom);
+			vboxTest2.setSpacing(10);
 			
 			hbox.getChildren().add(vboxTest);
+
 			hbox.getChildren().add(vboxTest2);	
 
-			Scene secondScene = new Scene(hbox, 600, 400);
+			Scene secondScene = new Scene(hbox, 700, 400);
 			secondScene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
 
