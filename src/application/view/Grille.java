@@ -6,6 +6,7 @@ import java.util.Random;
 import application.model.Carte;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,6 +24,9 @@ public class Grille {
 	private int[] numbers;
 	private int[] numbersInstall;
 	private Random rand = new Random();
+	private int compteur;
+	private Carte carteRetourne1 = null;
+	private Carte carteRetourne2 = null;
 
 	public Grille(Stage primaryStage ,ComboBox comboBoxCarte, ComboBox<Integer> comboBoxJoueur, TextField[] textFields) {
 		super();
@@ -49,17 +53,31 @@ public class Grille {
 		int j = 1;
 		
 		for(int c = 0; c < (paire * 2); c++) {
-			Carte carte1 = new Carte(" " + numbers[paire - j]);
+			Carte carte1 = new Carte(" " + numbers[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("bleach.png").toExternalForm()));
 			carte1.setMinSize(60, 80);
-			ImageView imageView1 = new ImageView(getClass().getResource("cart.png").toExternalForm());
-			carte1.setGraphic(imageView1);
-			boutonsTab[numbersInstall[c]] =  carte1;
+			carte1.setPadding(Insets.EMPTY);
+			carte1.setGraphic(carte1.getImageViewCartePile());
+			boutonsTab[numbersInstall[c]] = carte1;
+			
+			carte1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent event) {
+                	handleCarteClick(event, carte1);
+                }
+            });
+			
 			c++;
-			Carte carte2 = new Carte(" " + numbers[paire - j]);
+			Carte carte2 = new Carte(" " + numbers[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("bleach.png").toExternalForm()));
 			carte2.setMinSize(60, 80);
-			ImageView imageView2 = new ImageView(getClass().getResource("cart.png").toExternalForm());
-			carte2.setGraphic(imageView2);
+			carte2.setPadding(Insets.EMPTY);
+			carte2.setGraphic(carte2.getImageViewCartePile());
 			boutonsTab[numbersInstall[c]] =  carte2;
+			
+			carte2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent event) {
+                	handleCarteClick(event, carte2);
+                }
+            });
+			
 			j++;
 		}
 		
@@ -146,4 +164,24 @@ public class Grille {
             numbers[i] = next;
         }
 	}
+	
+	public void handleCarteClick(ActionEvent event, Carte carte) {
+    	if(carteRetourne1 == null) {
+    		carteRetourne1 = carte;
+    		carte.setGraphic(carte.getImageViewCarteFace());
+    	}
+    	else if(carteRetourne2 == null) {
+    		carteRetourne2 = carte;
+    		carte.setGraphic(carte.getImageViewCarteFace());
+    	}
+    	else {
+    		carteRetourne1.setGraphic(carteRetourne1.getImageViewCartePile());
+        	carteRetourne2.setGraphic(carteRetourne2.getImageViewCartePile());
+        	carte.setGraphic(carte.getImageViewCarteFace());
+    		carteRetourne1 = carte;
+        	if(carteRetourne2 != null) {
+        		carteRetourne2 = null;
+        	}
+    	}
+    }
 }
