@@ -5,24 +5,24 @@ import javafx.scene.image.ImageView;
 
 public class Carte extends Button{
 	
-	private String value;
+	private int value;
 	
 	private ImageView imageViewCarteFace;
 	
 	private ImageView imageViewCartePile;
 
-	public Carte(String value, ImageView imageViewPile, ImageView imageViewFace) {
+	public Carte(int value, ImageView imageViewPile, ImageView imageViewFace) {
 		super();
 		this.value = value;
 		this.imageViewCartePile = imageViewPile;
 		this.imageViewCarteFace = imageViewFace;
 	}
 
-	public String getValue() {
+	public int getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(int value) {
 		this.value = value;
 	}
 
@@ -40,5 +40,14 @@ public class Carte extends Button{
 
 	public void setImageViewCartePile(ImageView imageViewCartePile) {
 		this.imageViewCartePile = imageViewCartePile;
+	}
+	
+	public void retourner() {
+		if(this.getGraphic() == this.imageViewCartePile) {
+			this.setGraphic(imageViewCarteFace);
+		}
+		else {
+			this.setGraphic(imageViewCartePile);
+		}
 	}
 }

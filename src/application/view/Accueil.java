@@ -1,5 +1,6 @@
 package application.view;
 
+import application.model.Joueur;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,16 +33,16 @@ public class Accueil {
 		
 		Label labelJoueur = new Label("Choisissez le nombre de joueur :");
 		
-		ComboBox<Integer> comboBoxJoueur = new ComboBox();
+		ComboBox<Integer> comboBoxJoueur = new ComboBox<Integer>();
 		comboBoxJoueur.setId("custom-combo-box-joueur");
 		comboBoxJoueur.getItems().addAll(1,2,3,4);
 		
 		Label labelCarte = new Label("Choisissez le nombre de paire :");
 
-		ComboBox comboBoxCarte = new ComboBox();
+		ComboBox<Integer> comboBoxCarte = new ComboBox<Integer>();
 		comboBoxCarte.setId("custom-combo-box-carte");
-		comboBoxCarte.getItems().addAll(2,5,10,15,20,25,30);
-		comboBoxCarte.setValue(2);
+		comboBoxCarte.getItems().addAll(5,10,15,20,25,30);
+		comboBoxCarte.setValue(5);
 
 		Label label3 = new Label("Noms des joueurs :");
         TextField[] textFields = new TextField[4];
@@ -50,7 +51,7 @@ public class Accueil {
             textFields[i] = new TextField();
             textFields[i].setPromptText("Joueur " + (i + 1));
             textFields[i].setId("custom-text-field");
-           
+            
             if (i ==0) {
 		        textFields[i].setEditable(true);
 		        textFields[i].setVisible(true);

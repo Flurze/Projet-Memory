@@ -8,3 +8,7 @@
     -fx-border-width: 2px;
     
 }
+
+.button:disabled {
+    -fx-opacity: 1;
+}
