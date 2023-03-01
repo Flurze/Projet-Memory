@@ -6,8 +6,11 @@ import javafx.util.Duration;
 
 import application.model.Carte;
 import application.model.Joueur;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -183,48 +186,54 @@ public class Grille {
 	    	else if(carteRetourne2 == null) {
 	    		carteRetourne2 = carte;
 	    		carte.retourner();
-	    	}
-	    	else {
-				PauseTransition pause = new PauseTransition(Duration.seconds(1));
-				pause.play();		
-				pause.setOnFinished(new EventHandler<ActionEvent>() {
-				    @Override
-				    public void handle(ActionEvent event) {
-				    	if(carteRetourne1.getValue() == carteRetourne2.getValue()) {
-				    		joueurs[currentPlayerPosition].ajoutPoint();
-				    		joueurs[currentPlayerPosition].setText(joueurs[currentPlayerPosition].getNom() + joueurs[currentPlayerPosition].getScore());
-				    		carteRetourne1.setDisable(true);
-							carteRetourne2.setDisable(true);
-							carteRetourne1 = null;
-							carteRetourne2 = null;
-						}
-						else {
-							if(joueurs.length > 1) {
-								if(currentPlayerPosition == joueurs.length -1) {
-									joueurs[currentPlayerPosition].setStyle("-fx-border-color: white; -fx-border-width: 0px;");
-									currentPlayerPosition = 0;
-									joueurs[currentPlayerPosition].setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-								}
-								else {
-									joueurs[currentPlayerPosition].setStyle("-fx-border-color: white; -fx-border-width: 0px;");
-									currentPlayerPosition++;
-									joueurs[currentPlayerPosition].setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-								}
+	    		
+	    		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent e) -> {
+	    			if(carteRetourne1.getValue() == carteRetourne2.getValue()) {
+			    		joueurs[currentPlayerPosition].ajoutPoint();
+			    		joueurs[currentPlayerPosition].setText(joueurs[currentPlayerPosition].getNom() + joueurs[currentPlayerPosition].getScore());
+			    		carteRetourne1.setDisable(true);
+						carteRetourne2.setDisable(true);
+						carteRetourne1 = null;
+						carteRetourne2 = null;
+					}
+					else {
+						if(joueurs.length > 1) {
+							if(currentPlayerPosition == joueurs.length -1) {
+								joueurs[currentPlayerPosition].setStyle("-fx-border-color: white; -fx-border-width: 0px;");
+								currentPlayerPosition = 0;
+								joueurs[currentPlayerPosition].setStyle("-fx-border-color: black; -fx-border-width: 2px;");
 							}
-							carteRetourne1.retourner();
-							carteRetourne2.retourner();
-							carteRetourne1.setDisable(false);
-							carteRetourne1 = null;
-							carteRetourne2 = null;
+							else {
+								joueurs[currentPlayerPosition].setStyle("-fx-border-color: white; -fx-border-width: 0px;");
+								currentPlayerPosition++;
+								joueurs[currentPlayerPosition].setStyle("-fx-border-color: black; -fx-border-width: 2px;");
+							}
 						}
-				    	compteur++;
-				    }
-				});
-				/*System.out.println(carteRetourne1.getValue());
-		    	System.out.println(carteRetourne2.getValue());
-		    	System.out.println(currentPlayerPosition);
-		    	System.out.println(joueurs[currentPlayerPosition].getScore());*/
-			}
+						carteRetourne1.retourner();
+						carteRetourne2.retourner();
+						carteRetourne1.setDisable(false);
+						carteRetourne1 = null;
+						carteRetourne2 = null;
+					}
+			    	compteur++;
+	    		}));
+	    		
+	    		timeline.play();
+	    		
+	    		if(ensembleCartesRertournes()) {
+					if(joueurs.length > 1) {
+						Joueur joueurScoreMaximum = joueurs[0];
+						for(int i = 1; i < joueurs.length; i++) {
+							if(joueurs[i].getScore() > joueurScoreMaximum.getScore()) {
+								joueurScoreMaximum = joueurs[i];
+							}
+						}
+					}
+					else {
+						Popup popup = new Popup();
+					}
+				}
+	    	}
 		}
     }
 	
