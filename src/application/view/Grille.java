@@ -7,10 +7,8 @@ import javafx.util.Duration;
 import application.model.Carte;
 import application.model.Joueur;
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,12 +17,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Grille {
+public class Grille{
 	private Random rand = new Random();
 	
 	private int[] numbersValue;
@@ -35,9 +35,13 @@ public class Grille {
 	private int compteur;
 	private Carte carteRetourne1 = null;
 	private Carte carteRetourne2 = null;
+	
+	private Carte carteEchange1 = null;
+	private Carte carteEchange2 = null;
 	private int currentPlayerPosition;
+	private Stage newWindow;
 
-	public Grille(Stage primaryStage ,ComboBox comboBoxCarte, ComboBox<Integer> comboBoxJoueur, TextField[] textFields) {
+	public Grille(Stage primaryStage ,ComboBox<Integer> comboBoxCarte, ComboBox<Integer> comboBoxJoueur, TextField[] textFields) {
 		super();
 		
 		HBox hbox = new HBox();
@@ -74,6 +78,12 @@ public class Grille {
                 }
             });
 			
+			carte1.setOnMouseClicked((EventHandler<MouseEvent>) new EventHandler<MouseEvent>() {
+                public void handle(MouseEvent event) {
+                	actionMouseCLick(event, carte1);
+                }
+            });
+			
 			c++;
 			Carte carte2 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
 			carte2.setMinSize(60, 80);
@@ -84,6 +94,12 @@ public class Grille {
 			carte2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent event) {
                 	handleCarteClick(event, carte2);
+                }
+            });
+			
+			carte2.setOnMouseClicked((EventHandler<MouseEvent>) new EventHandler<MouseEvent>() {
+                public void handle(MouseEvent event) {
+                	actionMouseCLick(event, carte2);
                 }
             });
 			
@@ -118,7 +134,7 @@ public class Grille {
 		
 		
 		Button btn = new Button();
-        btn.setText("Quit");
+        btn.setText("Quitter");
         btn.setOnAction((ActionEvent e) -> {
             Platform.exit();
         });
@@ -140,21 +156,21 @@ public class Grille {
 		
 
 		VBox vboxTest2 = new VBox();
-		vboxTest2.getChildren().add(btn);
 		vboxTest2.getChildren().addAll(joueurs);
+		vboxTest2.getChildren().add(btn);
 		vboxTest2.setSpacing(10);
 		
 		hbox.getChildren().add(vboxTest);
 
 		hbox.getChildren().add(vboxTest2);	
 
-		Scene secondScene = new Scene(hbox, 700, 400);
+		Scene secondScene = new Scene(hbox, 800, 400);
 		secondScene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
 
 		// New window (Stage)
-		Stage newWindow = new Stage();
-		newWindow.setTitle("Second Stage");
+		newWindow = new Stage();
+		newWindow.setTitle("Jeu du memory");
 		newWindow.setScene(secondScene);
 		// Set position of second window, related to primary window.
 		newWindow.setX(primaryStage.getX() + 200);
@@ -186,7 +202,6 @@ public class Grille {
 	    	else if(carteRetourne2 == null) {
 	    		carteRetourne2 = carte;
 	    		carte.retourner();
-	    		
 	    		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent e) -> {
 	    			if(carteRetourne1.getValue() == carteRetourne2.getValue()) {
 			    		joueurs[currentPlayerPosition].ajoutPoint();
@@ -230,7 +245,7 @@ public class Grille {
 						}
 					}
 					else {
-						Popup popup = new Popup();
+						Popup popup = new Popup("Partie terminée !", "Voulez-vous recommencer ?", "Oui", "Non", newWindow);
 					}
 				}
 	    	}
@@ -244,5 +259,41 @@ public class Grille {
 			}
 		}
 		return true;
+	}
+	
+	public void actionMouseCLick(MouseEvent eventHandler, Carte carte) {
+		Joueur joueurScoreMin = joueurs[0];
+		
+		for(Joueur joueur : joueurs) {
+			if(joueurScoreMin.getScore() > joueur.getScore()) {
+				joueurScoreMin = joueur;
+			}
+		}
+		
+		if (eventHandler.getButton() == MouseButton.SECONDARY && joueurs[currentPlayerPosition] == joueurScoreMin) {
+            if(carteEchange1 == null) {
+            	carteEchange1 = carte;
+            	carte.retourner();
+            }
+            else if(carteEchange2 == null) {
+            	carteEchange2 = carte;
+            	carte.retourner();
+            	
+            	Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent e) -> {
+            		Carte carteTmp = new Carte(carteEchange1.getValue(), carteEchange1.getImageViewCartePile(), carteEchange1.getImageViewCarteFace());
+                	
+                	carteEchange1.setValue(carteEchange2.getValue());
+                	carteEchange1.setImageViewCarteFace(carteEchange2.getImageViewCarteFace());
+                	
+                	carteEchange2.setValue(carteTmp.getValue());
+                	carteEchange2.setImageViewCarteFace(carteTmp.getImageViewCarteFace());
+                	
+                	carteEchange1.retourner();
+                	carteEchange2.retourner();
+	    		}));
+	    		
+	    		timeline.play();
+            }
+        }
 	}
 }
