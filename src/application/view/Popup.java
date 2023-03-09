@@ -53,4 +53,32 @@ public class Popup {
 		popupStage.setScene(popupScene);
 		popupStage.show();
 	}
+	
+	public void confirmation(String title, String labelResult, String button, Stage stage, Stage stageAccueil) {
+		Stage popupStage = new Stage();
+		
+		popupStage.setTitle(title);
+		popupStage.initStyle(StageStyle.UNDECORATED);
+		popupStage.setResizable(false);
+		popupStage.setWidth(450);
+		popupStage.setHeight(350);
+		
+		Label labelResultView = new Label(labelResult);		
+		Button closeButton = new Button(button);
+		closeButton.setOnAction(e -> popupStage.close());
+		
+		HBox buttonsBox = new HBox();
+		buttonsBox.setAlignment(Pos.CENTER);
+	    buttonsBox.getChildren().addAll(closeButton);
+	    buttonsBox.setSpacing(10); // Espacement entre les boutons
+	    buttonsBox.setPadding(new Insets(10, 0, 0, 0)); // Marge supérieure
+		
+		
+		VBox layout = new VBox(10);
+		layout.getChildren().addAll(labelResultView, buttonsBox);
+		layout.setAlignment(Pos.CENTER);
+		Scene popupScene = new Scene(layout);
+		popupStage.setScene(popupScene);
+		popupStage.show();
+	}
 }

@@ -28,11 +28,16 @@ public class Accueil {
 	public Accueil(Stage primaryStage) {
 		super();
 		
+		Bibliotheque.AllImagesCheckboxs();
+		
 		vbox = new VBox();
 		VBox vbox2 = new VBox();
 
 		hbox = new HBox();
-		Button buttonBiblio= new Button("Bibliothéque");
+		Button buttonBiblio = new Button("Bibliothéque");
+		buttonBiblio.setOnAction((ActionEvent event)-> {
+			new Bibliotheque(primaryStage);
+		});
 		hbox.getChildren().add(buttonBiblio);
 		
 		Label labelJoueur = new Label("Choisissez le nombre de joueur :");
@@ -83,8 +88,14 @@ public class Accueil {
         
 		Button button= new Button("Continuer");
 		button.setOnAction((ActionEvent event)-> {
-			Grille grille = new Grille(primaryStage, comboBoxCarte, comboBoxJoueur, textFields);
-			primaryStage.close();
+			if(Bibliotheque.checkboxs.size() >= comboBoxCarte.getValue()) {
+				Grille grille = new Grille(primaryStage, comboBoxCarte, comboBoxJoueur, textFields);
+				primaryStage.close();
+			}
+			else {
+				Popup popup = new Popup();
+	            popup.confirmation("Bibliothèques", "Il n'y a pas assez de cartes sélectionnées.", "OK", primaryStage, primaryStage);
+			}
 		});
 		
 		vbox.getChildren().add(hbox);

@@ -71,7 +71,7 @@ public class Grille{
 		int j = 1;
 		
 		for(int c = 0; c < (paire * 2); c++) {
-			Carte carte1 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("img/carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("img/carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
+			Carte carte1 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("img/carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
 			carte1.setMinSize(60, 80);
 			carte1.setPadding(Insets.EMPTY);
 			carte1.setGraphic(carte1.getImageViewCartePile());
@@ -90,7 +90,7 @@ public class Grille{
             });
 			
 			c++;
-			Carte carte2 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("img/carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("img/carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
+			Carte carte2 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("img/carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
 			carte2.setMinSize(60, 80);
 			carte2.setPadding(Insets.EMPTY);
 			carte2.setGraphic(carte2.getImageViewCartePile());
