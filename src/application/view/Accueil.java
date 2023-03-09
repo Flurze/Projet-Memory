@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 public class Accueil {
 	
 	private VBox vbox;
+	private HBox hbox;
 	private int compteur;
 	
 
@@ -30,7 +31,9 @@ public class Accueil {
 		vbox = new VBox();
 		VBox vbox2 = new VBox();
 
-		
+		hbox = new HBox();
+		Button buttonBiblio= new Button("Bibliothéque");
+
 		Label labelJoueur = new Label("Choisissez le nombre de joueur :");
 		
 		ComboBox<Integer> comboBoxJoueur = new ComboBox<Integer>();
@@ -82,7 +85,8 @@ public class Accueil {
 			Grille grille = new Grille(primaryStage, comboBoxCarte, comboBoxJoueur, textFields);
 			primaryStage.close();
 		});
-	
+		
+		vbox.getChildren().add(buttonBiblio);
 		vbox.getChildren().add(labelJoueur);
 		vbox.getChildren().add(comboBoxJoueur);
 		vbox.getChildren().add(labelCarte);
