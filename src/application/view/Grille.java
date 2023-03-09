@@ -26,23 +26,28 @@ import javafx.stage.Stage;
 
 public class Grille{
 	private Random rand = new Random();
+	private Popup popup = new Popup();
 	
 	private int[] numbersValue;
 	private int[] numbersInstall;
 	private Carte[] boutonsTab;
 	private Joueur[] joueurs;
 	
-	private int compteur;
 	private Carte carteRetourne1 = null;
 	private Carte carteRetourne2 = null;
 	
 	private Carte carteEchange1 = null;
 	private Carte carteEchange2 = null;
+	private int nbCarteEchange = 0;
+	
 	private int currentPlayerPosition;
-	private Stage newWindow;
+	private Stage stageGrille;
+	private Stage stageAccueil;
 
 	public Grille(Stage primaryStage ,ComboBox<Integer> comboBoxCarte, ComboBox<Integer> comboBoxJoueur, TextField[] textFields) {
 		super();
+		
+		this.stageAccueil = primaryStage;
 		
 		HBox hbox = new HBox();
 		
@@ -143,7 +148,7 @@ public class Grille{
 		
 
         for(int i = 0;i < comboBoxJoueur.getValue();i++){
-        	joueurs[i] = new Joueur(textFields[i].getText()+" Score : ");
+        	joueurs[i] = new Joueur(textFields[i].getText());
         	joueurs[i].setId("custom-label");
         	joueurs[i].setPrefSize(200, 50);
 		}
@@ -169,14 +174,14 @@ public class Grille{
 
 
 		// New window (Stage)
-		newWindow = new Stage();
-		newWindow.setTitle("Jeu du memory");
-		newWindow.setScene(secondScene);
+		stageGrille = new Stage();
+		stageGrille.setTitle("Jeu du memory");
+		stageGrille.setScene(secondScene);
 		// Set position of second window, related to primary window.
-		newWindow.setX(primaryStage.getX() + 200);
-		newWindow.setY(primaryStage.getY() + 100);
+		stageGrille.setX(primaryStage.getX() + 200);
+		stageGrille.setY(primaryStage.getY() + 100);
 
-		newWindow.show();
+		stageGrille.show();
 	}
 	
 	private void initTabInt(int[] numbers, int range) {
@@ -198,6 +203,7 @@ public class Grille{
 	    		carteRetourne1 = carte;
 	    		carte.retourner();
 	    		carte.setDisable(true);
+	    		nbCarteEchange = 0;
 	    	}
 	    	else if(carteRetourne2 == null) {
 	    		carteRetourne2 = carte;
@@ -205,7 +211,7 @@ public class Grille{
 	    		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent e) -> {
 	    			if(carteRetourne1.getValue() == carteRetourne2.getValue()) {
 			    		joueurs[currentPlayerPosition].ajoutPoint();
-			    		joueurs[currentPlayerPosition].setText(joueurs[currentPlayerPosition].getNom() + joueurs[currentPlayerPosition].getScore());
+			    		joueurs[currentPlayerPosition].setText(joueurs[currentPlayerPosition].getNom() + " Score : " + joueurs[currentPlayerPosition].getScore());
 			    		carteRetourne1.setDisable(true);
 						carteRetourne2.setDisable(true);
 						carteRetourne1 = null;
@@ -230,24 +236,35 @@ public class Grille{
 						carteRetourne1 = null;
 						carteRetourne2 = null;
 					}
-			    	compteur++;
+			    	
+			    	if(ensembleCartesRertournes()) {
+						if(joueurs.length > 1) {
+							int equal = 0;
+							Joueur joueurScoreMaximum = joueurs[0];
+							for(int i = 1; i < joueurs.length; i++) {
+								if(joueurs[i].getScore() > joueurScoreMaximum.getScore()) {
+									joueurScoreMaximum = joueurs[i];
+									equal = 0;
+								}
+								else if(joueurs[i].getScore() == joueurScoreMaximum.getScore()) {
+									equal++;
+								}
+							}
+							
+							if(equal > 0) {
+								popup.restart("Partie terminée !", "Égalité ! "," Voulez-vous recommencer ?", "Oui", "Non", stageGrille, stageAccueil);
+							}
+							else {
+								popup.restart("Partie terminée !", "Bien joué " + joueurScoreMaximum.getNom(), "Voulez-vous recommencer ?", "Oui", "Non", stageGrille, stageAccueil);
+							}
+						}
+						else {
+							popup.restart("Partie terminée !", "Fini !" ,"Voulez-vous recommencer ?", "Oui", "Non", stageGrille, stageAccueil);
+						}
+					}
 	    		}));
 	    		
 	    		timeline.play();
-	    		
-	    		if(ensembleCartesRertournes()) {
-					if(joueurs.length > 1) {
-						Joueur joueurScoreMaximum = joueurs[0];
-						for(int i = 1; i < joueurs.length; i++) {
-							if(joueurs[i].getScore() > joueurScoreMaximum.getScore()) {
-								joueurScoreMaximum = joueurs[i];
-							}
-						}
-					}
-					else {
-						Popup popup = new Popup("Partie terminée !", "Voulez-vous recommencer ?", "Oui", "Non", newWindow);
-					}
-				}
 	    	}
 		}
     }
@@ -270,7 +287,7 @@ public class Grille{
 			}
 		}
 		
-		if (eventHandler.getButton() == MouseButton.SECONDARY && joueurs[currentPlayerPosition] == joueurScoreMin) {
+		if (eventHandler.getButton() == MouseButton.SECONDARY && joueurs[currentPlayerPosition] == joueurScoreMin && nbCarteEchange == 0) {
             if(carteEchange1 == null) {
             	carteEchange1 = carte;
             	carte.retourner();
@@ -290,6 +307,11 @@ public class Grille{
                 	
                 	carteEchange1.retourner();
                 	carteEchange2.retourner();
+                	
+                	carteEchange1 = null;
+                	carteEchange2 = null;
+                	
+                	nbCarteEchange++;
 	    		}));
 	    		
 	    		timeline.play();

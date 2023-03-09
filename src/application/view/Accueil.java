@@ -80,6 +80,7 @@ public class Accueil {
 		Button button= new Button("Continuer");
 		button.setOnAction((ActionEvent event)-> {
 			Grille grille = new Grille(primaryStage, comboBoxCarte, comboBoxJoueur, textFields);
+			primaryStage.close();
 		});
 	
 		vbox.getChildren().add(labelJoueur);

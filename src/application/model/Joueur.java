@@ -11,7 +11,7 @@ public class Joueur extends Label {
 	public Joueur(String nom) {
 		super();
 		this.nom = nom;
-		this.setText(nom + score);
+		this.setText(nom + " Score : " + score);
 	}
 
 	public String getNom() {
