@@ -33,7 +33,8 @@ public class Accueil {
 
 		hbox = new HBox();
 		Button buttonBiblio= new Button("Bibliothéque");
-
+		hbox.getChildren().add(buttonBiblio);
+		
 		Label labelJoueur = new Label("Choisissez le nombre de joueur :");
 		
 		ComboBox<Integer> comboBoxJoueur = new ComboBox<Integer>();
@@ -86,7 +87,7 @@ public class Accueil {
 			primaryStage.close();
 		});
 		
-		vbox.getChildren().add(buttonBiblio);
+		vbox.getChildren().add(hbox);
 		vbox.getChildren().add(labelJoueur);
 		vbox.getChildren().add(comboBoxJoueur);
 		vbox.getChildren().add(labelCarte);
