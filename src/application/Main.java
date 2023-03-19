@@ -12,6 +12,8 @@ public class Main extends Application {
 		try {
 			Accueil accueil = new Accueil(primaryStage);
 			Scene scene = new Scene(accueil.getVbox(),460,480);
+			
+			// Ajout de la feuille de style css pour l'application
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();

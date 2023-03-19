@@ -2,18 +2,17 @@ package application.view;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import application.model.Visuel;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -26,8 +25,10 @@ public class Bibliotheque {
 	private Stage stageBiblio;
     private final static String IMAGES_DIRECTORY = "src/application/view/img/";
     
-    public static List<CheckBox> checkboxs = new ArrayList<>();
+    public static List<Visuel> visuels = new ArrayList<>();
     public static GridPane imageGrid = new GridPane();
+    public static int row = 0;
+    public static int col = 0;
     
     
 	public Bibliotheque(Stage primaryStage) {
@@ -64,37 +65,8 @@ public class Bibliotheque {
         File[] imageFiles = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(".png"));
 
         // Parcours de la liste des fichiers pour afficher les images
-        int row = 0;
-        int col = 0;
         for (File imageFile : imageFiles) {
-        	
-            // Création de l'image et de la checkbox associée
-            ImageView imageView = new ImageView(new Image(imageFile.toURI().toString(), 60, 89, true, true));
-            CheckBox checkbox = new CheckBox();
-            checkboxs.add(checkbox);
-            checkbox.setSelected(true);
-            
-            // Ajouter un écouteur d'événements sur la propriété "selected"
-            checkbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue) {
-                	checkboxs.add(checkbox);
-                }
-                if(oldValue) {
-                	checkboxs.remove(checkbox);
-                }
-            });
-            
-
-            // Ajout de l'image et de la checkbox au conteneur
-            imageGrid.add(imageView, col, row);
-            imageGrid.add(checkbox, col, row + 1);
-
-            // Gestion de l'ajout de nouvelles images sur une nouvelle ligne
-            col++;
-            if (col > 15) {
-                col = 0;
-                row += 2;
-            }
+        	addCard(imageFile);
         }
 	}
     
@@ -102,8 +74,6 @@ public class Bibliotheque {
     	
     	// Création d'un objet FileChooser pour sélectionner un fichier image
         FileChooser fileChooser = new FileChooser();
-        
-        // Définir un titre pour la boîte de dialogue de sélection de fichier
         fileChooser.setTitle("Sélectionner une image de 60x89 pixels en PNG");
 
 
@@ -130,7 +100,6 @@ public class Bibliotheque {
                 else {
                 	if(!this.imageExisting(selectedFile)) {
                 		downloadImage(selectedFile);
-                    	Bibliotheque.AllImagesCheckboxs();
                 	}
                 	else {
                 		Popup popup3 = new Popup();
@@ -151,6 +120,7 @@ public class Bibliotheque {
             Path destinationPath = Paths.get(IMAGES_DIRECTORY + selectedFile.getName());
             try {
                 Files.copy(sourcePath, destinationPath);
+                addCard(destinationPath.toFile());
             } catch (IOException e) {
                 // Gérer les erreurs de copie de fichier
                 e.printStackTrace();
@@ -170,5 +140,35 @@ public class Bibliotheque {
         }
         
         return false;
+    }
+    
+    public static void addCard(File imageFile) {
+    	// Création de l'image et de la checkbox associée
+    	Image image = new Image(imageFile.toURI().toString(), 60, 89, true, true);
+        ImageView imageView = new ImageView(image);
+        Visuel visuel = new Visuel(image, true);
+        visuels.add(visuel);
+        
+        // Ajouter un écouteur d'événements sur la propriété "selected"
+        visuel.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) {
+            	visuels.add(visuel);
+            }
+            if(oldValue) {
+            	visuels.remove(visuel);
+            }
+        });
+        
+
+        // Ajout de l'image et de la checkbox au conteneur
+        imageGrid.add(imageView, col, row);
+        imageGrid.add(visuel, col, row + 1);
+        
+        // Gestion de l'ajout de nouvelles images sur une nouvelle ligne
+        col++;
+        if (col > 15) {
+            col = 0;
+            row += 2;
+        }
     }
 }

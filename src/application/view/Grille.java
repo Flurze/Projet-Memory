@@ -44,45 +44,61 @@ public class Grille{
 	private Stage stageGrille;
 	private Stage stageAccueil;
 
+	// Constructeur de la classe Grille
 	public Grille(Stage primaryStage ,ComboBox<Integer> comboBoxCarte, ComboBox<Integer> comboBoxJoueur, TextField[] textFields) {
 		super();
 		
+		// Initialise le stage principal
 		this.stageAccueil = primaryStage;
 		
+		// Initialise une boîte horizontale pour contenir les deux colonnes
 		HBox hbox = new HBox();
 		
+		// Initialise une grille pour contenir les cartes
 		GridPane gridPane = new GridPane();
 		
+		// Configure les marges, l'espacement vertical et horizontal de la grille
 		gridPane.setPadding(new Insets(20));
 		gridPane.setVgap(10);
 		gridPane.setHgap(10);
 		
+		// Récupère le nombre de paires de cartes sélectionné dans le comboBox de l'accueil
 		int paire = Integer.valueOf(comboBoxCarte.getValue().toString());
 		
+		// Initialise un tableau de cartes vide
 		boutonsTab = new Carte[(paire*2)];
 		
+		// Initialise un tableau d'entiers pour stocker les valeurs de chaque carte
 		numbersValue = new int[paire];
 		
+		// Initialise un tableau d'entiers pour stocker les positions des cartes dans le tableau boutonsTab
 		numbersInstall = new int[paire * 2];
 		
+		// Initialise les tableaux d'entiers avec des valeurs par défaut
 		this.initTabInt(numbersValue, 30);
 		this.initTabInt(numbersInstall, paire * 2);
 		
+		// Initialise un compteur
 		int j = 1;
 		
+		// Boucle pour créer les paires de cartes
 		for(int c = 0; c < (paire * 2); c++) {
-			Carte carte1 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("img/carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
+			
+			// Création de la carte 1 de la paire
+			Carte carte1 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(Bibliotheque.visuels.get(paire - j).getImage()));
 			carte1.setMinSize(60, 80);
 			carte1.setPadding(Insets.EMPTY);
 			carte1.setGraphic(carte1.getImageViewCartePile());
 			boutonsTab[numbersInstall[c]] = carte1;
 			
+			// Définition de l'action à effectuer lorsque la carte 1 est cliquée avec le bouton gauche de la souris
 			carte1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent event) {
                 	handleCarteClick(event, carte1);
                 }
             });
 			
+			// Définition de l'action à effectuer lorsque la carte 1 est cliquée avec le bouton droit de la souris
 			carte1.setOnMouseClicked((EventHandler<MouseEvent>) new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent event) {
                 	actionMouseCLick(event, carte1);
@@ -90,18 +106,21 @@ public class Grille{
             });
 			
 			c++;
-			Carte carte2 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(getClass().getResource("img/carte_" + numbersValue[paire - j] + ".png").toExternalForm()));
+			// Création de la carte 2 de la paire
+			Carte carte2 = new Carte(numbersValue[paire - j], new ImageView(getClass().getResource("carte_pile.png").toExternalForm()), new ImageView(Bibliotheque.visuels.get(paire - j).getImage()));
 			carte2.setMinSize(60, 80);
 			carte2.setPadding(Insets.EMPTY);
 			carte2.setGraphic(carte2.getImageViewCartePile());
 			boutonsTab[numbersInstall[c]] =  carte2;
 			
+			// Définition de l'action à effectuer lorsque la carte 2 est cliquée avec le bouton gauche de la souris
 			carte2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent event) {
                 	handleCarteClick(event, carte2);
                 }
             });
 			
+			// Définition de l'action à effectuer lorsque la carte 2 est cliquée avec le bouton droit de la souris
 			carte2.setOnMouseClicked((EventHandler<MouseEvent>) new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent event) {
                 	actionMouseCLick(event, carte2);
@@ -111,6 +130,7 @@ public class Grille{
 			j++;
 		}
 		
+		//Ligne 134 à 158 -> fonction qui permet de calculer le nombre de ligne et de colonne en fonction du nombre de carte séletionné par le joueur pour l'affichage des cartes
 		int rows = 0;
 		int columns = 0;
 		
@@ -146,13 +166,14 @@ public class Grille{
         
         this.joueurs = new Joueur[comboBoxJoueur.getValue()];
 		
-
+        //Initialisation des joueurs et leur affichage
         for(int i = 0;i < comboBoxJoueur.getValue();i++){
         	joueurs[i] = new Joueur(textFields[i].getText());
         	joueurs[i].setId("custom-label");
         	joueurs[i].setPrefSize(200, 50);
 		}
         
+        //Initialisation du joueurs courrant a 0 plus ajout d'une bordure noir
         this.currentPlayerPosition = 0;
         joueurs[currentPlayerPosition].setStyle("-fx-border-color: black; -fx-border-width: 2px;");
         
@@ -184,27 +205,38 @@ public class Grille{
 		stageGrille.show();
 	}
 	
+	// La méthode initTabInt initialise un tableau d'entiers avec des valeurs aléatoires uniques, comprises entre 0 et range
 	private void initTabInt(int[] numbers, int range) {
+		// On utilise la classe Random pour générer des nombres aléatoires
         for (int i = 0; i < numbers.length; i++) {
+        	// On génère un nombre aléatoire entre 0 et range
             int next = rand.nextInt(range);
             for (int j = 0; j < i; j++) {
+            	// On vérifie si le nombre généré est déjà présent dans le tableau
                 if (numbers[j] == next) {
+                	// Si oui, on en génère un nouveau
                     next = rand.nextInt(range);
                     j = -1;
+                    // Et on recommence la vérification depuis le début
                 }
             }
+            // On ajoute le nombre généré au tableau
             numbers[i] = next;
         }
 	}
 	
+	// Cette méthode est appelée lorsqu'un utilisateur clique sur une carte
 	public void handleCarteClick(ActionEvent event, Carte carte) {
+		// Vérifie toutes les cartes ne sont pas retournés
 		if(!ensembleCartesRertournes()) {
+			// Si la première carte n'est pas retournée, retournez la carte sélectionnée et elle devient la première carte retournée
 			if(carteRetourne1 == null) {
 	    		carteRetourne1 = carte;
 	    		carte.retourner();
 	    		carte.setDisable(true);
 	    		nbCarteEchange = 0;
 	    	}
+			// Si la deuxième carte n'est pas retournée, retournez la carte sélectionnée et elle devient la deuxième carte retournée
 	    	else if(carteRetourne2 == null) {
 	    		carteRetourne2 = carte;
 	    		carte.retourner();
@@ -217,7 +249,8 @@ public class Grille{
 						carteRetourne1 = null;
 						carteRetourne2 = null;
 					}
-					else {
+	    			else {
+	    				// Si plusieurs joueurs jouent, passez au joueur suivant et retournez les deux cartes 
 						if(joueurs.length > 1) {
 							if(currentPlayerPosition == joueurs.length -1) {
 								joueurs[currentPlayerPosition].setStyle("-fx-border-color: white; -fx-border-width: 0px;");
@@ -237,6 +270,7 @@ public class Grille{
 						carteRetourne2 = null;
 					}
 			    	
+	    			// Si toutes les cartes sont retournées, affichez un message de fin de partie et proposez de recommencer
 			    	if(ensembleCartesRertournes()) {
 						if(joueurs.length > 1) {
 							int equal = 0;
@@ -269,33 +303,44 @@ public class Grille{
 		}
     }
 	
+	// Vérifie si toutes les cartes ont été retournées
 	public boolean ensembleCartesRertournes() {
 		for(int i = 0; i < boutonsTab.length; i++) {
 			if(boutonsTab[i].getGraphic() == boutonsTab[i].getImageViewCartePile()) {
+				// S'il y a une carte non retournée, retourne false
 				return false;
 			}
 		}
+		// Toutes les cartes sont retournées, retourne true
 		return true;
 	}
 	
+	// Cette méthode est appelée lorsqu'un joueur clique sur une carte
 	public void actionMouseCLick(MouseEvent eventHandler, Carte carte) {
+		
+		// On initialise le joueur ayant le score le plus faible
 		Joueur joueurScoreMin = joueurs[0];
 		
+		// On parcourt les joueurs pour trouver celui ayant le score le plus faible
 		for(Joueur joueur : joueurs) {
 			if(joueurScoreMin.getScore() > joueur.getScore()) {
 				joueurScoreMin = joueur;
 			}
 		}
 		
+		// Si le clic est un clic droit et que le joueur actuel est celui ayant le score le plus faible et qu'aucune carte n'est en cours d'échange
 		if (eventHandler.getButton() == MouseButton.SECONDARY && joueurs[currentPlayerPosition] == joueurScoreMin && nbCarteEchange == 0) {
+			// Si la première carte d'échange n'est pas encore sélectionnée
             if(carteEchange1 == null) {
             	carteEchange1 = carte;
             	carte.retourner();
             }
+    		// Si la deuxième carte d'échange n'est pas encore sélectionnée
             else if(carteEchange2 == null) {
             	carteEchange2 = carte;
             	carte.retourner();
             	
+            	// On définit une animation pour échanger les deux cartes sélectionnées
             	Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent e) -> {
             		Carte carteTmp = new Carte(carteEchange1.getValue(), carteEchange1.getImageViewCartePile(), carteEchange1.getImageViewCarteFace());
                 	
